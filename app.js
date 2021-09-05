@@ -1,3 +1,4 @@
+//Helper function for random values of heal and attack
 function getMinMax(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
@@ -5,6 +6,7 @@ function getMinMax(min, max) {
 const app = Vue.createApp({
   data() {
     return {
+      // Neccessary variables and initial values
       playerHealth: 100,
       monsterHealth: 100,
       currentRound: 0,
@@ -13,6 +15,7 @@ const app = Vue.createApp({
     };
   },
   computed: {
+    // Monster health bar activity
     monsterBarStyles() {
       if (this.monsterHealth <= 0) {
         return {
@@ -21,6 +24,7 @@ const app = Vue.createApp({
       }
       return { width: this.monsterHealth + '%' };
     },
+    // Player health bar activity
     playerBarStyles() {
       if (this.playerHealth <= 0) {
         return {
@@ -29,20 +33,24 @@ const app = Vue.createApp({
       }
       return { width: this.playerHealth + '%' };
     },
+    // Special attack every fith attack
     mayUseSpecialAttack() {
       return this.currentRound % 5 !== 0;
     },
+    // Can use heal if healt bar lower than 100
     mayUseHeal() {
       if (this.playerHealth === 100) return true;
     },
   },
   watch: {
+    // Watcher for the player health bar
     playerHealth(value) {
       if (value <= 0) {
         // Player lost
         this.winner = 'monster';
       }
     },
+    // Watcher for the monster health bar
     monsterHealth(value) {
       if (value <= 0) {
         // Monster lost
@@ -51,6 +59,7 @@ const app = Vue.createApp({
     },
   },
   methods: {
+    // Initial values
     startGame() {
       this.playerHealth = 100;
       this.monsterHealth = 100;
@@ -58,6 +67,7 @@ const app = Vue.createApp({
       this.currentRound = 0;
       this.logMessages = [];
     },
+    // The PLAYER attacking the Monster
     attackMonster() {
       this.currentRound++;
       const attackValue = getMinMax(5, 12);
@@ -68,6 +78,7 @@ const app = Vue.createApp({
         this.attackPlayer();
       }
     },
+    // The MONSTER attacking the Player
     attackPlayer() {
       const attackValue = getMinMax(8, 15);
       setTimeout(() => {
@@ -75,16 +86,18 @@ const app = Vue.createApp({
         this.playerHealth -= attackValue;
       }, 500);
     },
+    // The PLAYER'S special attacking the Monster
     specialAttackMonster() {
       this.currentRound++;
       const attackValue = getMinMax(10, 25);
-      this.addLogMessage('player', 'attack', attackValue);
+      this.addLogMessage('player', 'special-attack', attackValue);
       this.monsterHealth -= attackValue;
 
       if (this.monsterHealth > 0) {
         this.attackPlayer();
       }
     },
+    // The PLAYER healing theirself
     healPlayer() {
       const healValue = getMinMax(5, 10);
       if (this.playerHealth + healValue > 100) {
@@ -96,6 +109,7 @@ const app = Vue.createApp({
       }
       this.healMonster();
     },
+    // The MONSTER healing itself
     healMonster() {
       const healValue = getMinMax(3, 8);
       setTimeout(() => {
@@ -108,16 +122,17 @@ const app = Vue.createApp({
         }
       }, 500);
     },
+    // The PLAYER surrenders
     surrender() {
       this.winner = 'monster';
     },
+    // Battle log messages array
     addLogMessage(who, what, value) {
       this.logMessages.unshift({
         actionBy: who,
         actionType: what,
         actionValue: value,
       });
-      console.log(this.logMessages);
     },
   },
 });

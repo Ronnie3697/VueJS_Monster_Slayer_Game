@@ -118,6 +118,12 @@ button:disabled {
   color: red;
 }
 
+.log--special-damage {
+  color: red;
+  font-style: bold;
+  font-size: 1.3em;
+}
+
 .log--heal {
   color: green;
 }
