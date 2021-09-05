@@ -21,7 +21,7 @@
         <h2>Monster Health</h2>
         <div class="healthbar">
           <div class="healthbar__value" :style="monsterBarStyles">
-            {{ monsterHealth }}
+            {{ monsterHealth > 0 ? monsterHealth : ''}}
           </div>
         </div>
       </section>
@@ -29,21 +29,36 @@
         <h2>Your Health</h2>
         <div class="healthbar">
           <div class="healthbar__value" :style="playerBarStyles">
-            {{ playerHealth }}
+            {{ playerHealth > 0 ? playerHealth : ''}}
           </div>
         </div>
       </section>
-      <section id="controls">
+
+      <section v-if="winner" class="container">
+        <h2>Game Over!</h2>
+        <h3 v-if="winner === 'monster'">You Lost!</h3>
+        <h3 v-else-if="winner === 'player'">You Won!</h3>
+        <button @click="startGame">New Game</button>
+      </section>
+
+      <section v-if="!winner" id="controls">
         <button @click="attackMonster">ATTACK</button>
         <button :disabled="mayUseSpecialAttack" @click="specialAttackMonster">
           SPECIAL ATTACK
         </button>
         <button :disabled="mayUseHeal" @click="healPlayer">HEAL</button>
-        <button>SURRENDER</button>
+        <button @click="surrender">SURRENDER</button>
       </section>
       <section id="log" class="container">
         <h2>Battle Log</h2>
-        <ul></ul>
+        <ul>
+          <li v-for="(log,index) in logMessages">
+            <span>{{ log.actionBy === 'player' ? 'Player' : 'Monster' }}</span>
+            <span v-if="log.actionType === 'heal'">
+              healed theirself by {{ log.actionValue }}</span
+            >
+          </li>
+        </ul>
       </section>
     </div>
   </body>
