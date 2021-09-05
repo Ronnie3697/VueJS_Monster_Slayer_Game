@@ -24,12 +24,26 @@ const app = Vue.createApp({
       if (this.playerHealth === 100) return true;
     },
   },
+  watch: {
+    playerHealth(value) {
+      if (value <= 0) {
+        // Player lost
+      }
+    },
+    monsterHealth(value) {
+      if (value <= 0) {
+        // Monster lost
+      }
+    },
+  },
   methods: {
     attackMonster() {
       this.currentRound++;
       const attackValue = getMinMax(5, 12);
       this.monsterHealth -= attackValue;
-      this.attackPlayer();
+      if (this.monsterHealth > 0) {
+        this.attackPlayer();
+      }
     },
     attackPlayer() {
       setTimeout(() => {
@@ -41,7 +55,9 @@ const app = Vue.createApp({
       this.currentRound++;
       const attackValue = getMinMax(10, 25);
       this.monsterHealth -= attackValue;
-      this.attackPlayer();
+      if (this.monsterHealth > 0) {
+        this.attackPlayer();
+      }
     },
     healPlayer() {
       const healValue = getMinMax(5, 10);
